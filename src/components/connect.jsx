@@ -56,14 +56,14 @@ const Connect = () => {
            className='flex flex-row justify-between items-center h-[52px] bg-yellow1 py-2 px-4 rounded-2xl text-white font-medium text-lg'
         >
            <Image 
-            src="/assets/Images/metamask.png" 
+            src="/assets/metamask.png" 
             className="mr-2"
             width="24" 
             height="24"
             alt=''
            /> 
            Connect Metamask
-        </button> 
+      </button> 
     </div>
   )
 }

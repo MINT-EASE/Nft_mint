@@ -1,5 +1,10 @@
+'use client';
+
 import dynamic from 'next/dynamic'
 import React from 'react'
+import Head from '@/components/mintComp/Head';
+import Section1 from '@/components/mintComp/Section1';
+import Section2 from '@/components/mintComp/Section2';
 
 
 const Mint = dynamic(() => import ("../../components/mint"), {
@@ -9,7 +14,19 @@ const Mint = dynamic(() => import ("../../components/mint"), {
 const Page = () => {
   return (
     <div>
-       <Mint/>
+       {/* <Mint/> */}
+
+      <Head />
+
+       <div
+        className='flex flex-row justify-between p-8'
+       >
+
+          <Section1 />
+
+          <Section2 />
+
+       </div>
     </div>
   )
 }
