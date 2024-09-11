@@ -1,5 +1,5 @@
 import { Contract, utils } from "zksync-ethers";
-import { PAYMASTER_CONTRACT_ADDRESS } from "../constants/consts";
+// import { PAYMASTER_CONTRACT_ADDRESS } from "../constants/consts";
 import * as ethers from "ethers";
 
 /**
