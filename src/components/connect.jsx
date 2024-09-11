@@ -46,16 +46,14 @@ const Connect = () => {
   }
   return (
      <div
-        className='flex flex-row justify-between items-center p-4 mb-8 border-b border-slate-500'
+        className='flex flex-row justify-between items-center p-8 border-b border-slate-500'
     >
-        <p
-            className='font-bold text-[#D6594B] text-3xl'
-        >
-            Mint you Token
-        </p>
+            <Image src='/assets/logo.png' width="24" height="24" alt=''
+      />
+
 
         <button onClick={requestAccount}
-            className='flex flex-row justify-between items-center h-[52px] bg-slate-500/50 py-2 px-4 rounded-xl text-white font-medium text-lg'
+           className='flex flex-row justify-between items-center h-[52px] bg-yellow1 py-2 px-4 rounded-2xl text-white font-medium text-lg'
         >
            <Image 
             src="/assets/Images/metamask.png" 

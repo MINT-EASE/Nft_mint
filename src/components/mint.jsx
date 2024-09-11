@@ -5,6 +5,7 @@ import Web3 from "web3";
 import { pinata } from "@/utils/config"; // Assuming Pinata setup is in config
 import ABI from "@/scripts/abi.mjs";
 import Image from "next/image";
+import { ZKsyncPlugin, getPaymasterParams } from "web3-plugin-zksync"
 
 const MintNFT = () => {
   const [account, setAccount] = useState(null);
@@ -61,36 +62,43 @@ const MintNFT = () => {
     setFile(e.target.files[0]);
   };
 
-  // Handle file upload
-  // const handleFileUpload = async (e) => {
-  //   const file = e.target.files[0];
-  //   if (file) {
-  //     setImage(URL.createObjectURL(file));
-  //     setFile(file);
-  //     await uploadFile(); // Store file on IPFS and set tokenURI
-  //   }
-  // };
 
   // Mint the NFT using MetaMask
   const handleMint = async () => {
-    //  if (!url || !address) {
-    //   alert('Please provide the URL and address');
-    //   return;
-    // }
-
-    // setMinting(true);
-    // setMintMessage('')
 
     try {
       const web3 = new Web3(window.ethereum); // Use MetaMask provider
+      web3.registerPlugin(new ZKsyncPlugin("https://sepolia.era.zksync.dev"));
       const contractAddress = "0x31d829BE8be3EfAfC7F7C1aDB482278f4B9Fa582"; // Your deployed MyNFT contract address
       const nftContract = new web3.eth.Contract(ABI, contractAddress);
 
+      const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+      const account = accounts[0];
+    
+
       console.log("nft contract",nftContract);
+        console.log("Recipient address (account):", account);
+
+      // Make sure the URL is available
+      if (!url) {
+        alert('Please provide the URL for the NFT');
+        return;
+      }
+
+        // Paymaster settings
+      const paymasterParams = getPaymasterParams("0x13D0D8550769f59aa241a41897D4859c87f7Dd46", {
+        type: "ApprovalBased",
+        token: "0x927488F48ffbc32112F1fF721759649A89721F8F", // The token the Paymaster is allowed to use for gas fees
+        minimalAllowance: 1,
+        innerInput: new Uint8Array(),
+      });
+       console.log()
 
       // Mint the NFT
-      const mintTx = await nftContract.methods.mint(account, tokenURI).send({
+      const mintTx = await nftContract.methods.mint(account, url).send({
         from: account,
+        gas: 0, // User is not paying gas
+       paymasterParams, // Paymaster covers the gas fee
       });
 
       setMessage("Mint successful!");
@@ -104,13 +112,8 @@ const MintNFT = () => {
   };
 
   return (
-    <div className="container mx-auto p-4">
+    <div  className='flex flex-row justify-between items-center p-8 border-b border-slate-500'>
       <h1 className="text-2xl font-bold mb-4">Mint Your NFT</h1>
-
-      {/* Connect Wallet */}
-      {/* <button onClick={connectWallet} className="mb-4 p-2 bg-blue-500 text-white">
-        {account ? `Connected: ${account}` : "Connect Wallet"}
-      </button> */}
 
       {/* Upload Image */}
       {!tokenURI && (
