@@ -5,6 +5,8 @@ import React from 'react'
 import Head from '@/components/mintComp/Head';
 import Section1 from '@/components/mintComp/Section1';
 import Section2 from '@/components/mintComp/Section2';
+import MintNFT from '@/components/mint';
+
 
 
 const Mint = dynamic(() => import ("../../components/mint"), {
@@ -21,10 +23,11 @@ const Page = () => {
        <div
         className='flex flex-row justify-between p-8'
        >
+        <MintNFT/>
 
-          <Section1 />
+          {/* <Section1 />
 
-          <Section2 />
+          <Section2 /> */}
 
        </div>
     </div>
