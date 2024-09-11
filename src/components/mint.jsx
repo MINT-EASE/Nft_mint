@@ -112,8 +112,10 @@ const MintNFT = () => {
   };
 
   return (
-    <div  className='flex flex-row justify-between items-center p-8 border-b border-slate-500'>
+    <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">Mint Your NFT</h1>
+
+    
 
       {/* Upload Image */}
       {!tokenURI && (
