@@ -21,13 +21,13 @@ const Page = () => {
       <Head />
 
        <div
-        className='flex flex-row justify-between p-8'
+        className='flex flex-row justify-center items-center p-8'
        >
         <MintNFT/>
 
-          {/* <Section1 />
+        {/* <Section1 /> */}
 
-          <Section2 /> */}
+          {/* <Section2 /> */}
 
        </div>
     </div>

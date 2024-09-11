@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState, useEffect,useContext } from 'react';
-import { ethers } from 'ethers';
+// import { ethers } from 'ethers';
 // import { Web3Provider, Signer, Contract } from "zksync-ethers";
 import ABI from "@/scripts/abi.mjs";
 import { useRouter } from "next/navigation";
@@ -12,74 +12,74 @@ import { useRouter } from "next/navigation";
 
 const ConnectWallet = () => {
 
-  const [networkOk, setNetworkOk] = useState(false);
-  const [wallet, setWallet] = useState({ address: "", acc_short: "" });
-  const NETWORK_NAME = "zkSync Era Sepolia Testnet";
-  const NETWORK_ID = "0x12c";
-  const router = useRouter();
+  // const [networkOk, setNetworkOk] = useState(false);
+  // const [wallet, setWallet] = useState({ address: "", acc_short: "" });
+  // const NETWORK_NAME = "zkSync Era Sepolia Testnet";
+  // const NETWORK_ID = "0x12c";
+  // const router = useRouter();
 
-  // useEffect(() => {
-  //   checkNetwork();
-  // }, []);
+  // // useEffect(() => {
+  // //   checkNetwork();
+  // // }, []);
 
-  const shortenAddress = (address) => {
-    const start = address.slice(0, 6);
-    const end = address.slice(-4);
-    return `${start}...${end}`;
-  };
+  // const shortenAddress = (address) => {
+  //   const start = address.slice(0, 6);
+  //   const end = address.slice(-4);
+  //   return `${start}...${end}`;
+  // };
 
 
-  const connectWallet = async () => {
-    console.log("connectWallet");
-    // if (!networkOk) await switchNetwork();
-    try {
+  // const connectWallet = async () => {
+  //   console.log("connectWallet");
+  //   // if (!networkOk) await switchNetwork();
+  //   try {
      
-      if(window.ethereum){
-        try{
-          console.log("metamask detected");
-          const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
-           console.log("metamsk accounts",accounts);
+  //     if(window.ethereum){
+  //       try{
+  //         console.log("metamask detected");
+  //         const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
+  //          console.log("metamsk accounts",accounts);
 
           
-          setWallet(accounts[0], shortenAddress(accounts[0]));
+  //         setWallet(accounts[0], shortenAddress(accounts[0]));
 
-          // Save the wallet address in local storage
-          localStorage.setItem('walletAddress', accounts[0]);
+  //         // Save the wallet address in local storage
+  //         localStorage.setItem('walletAddress', accounts[0]);
           
 
-          //Redirect to profile page if wallet is connected
-          if (accounts.length > 0) {
-            router.push("/mint");
-          } else {
-            console.log("No accounts found.");
-          }
+  //         //Redirect to profile page if wallet is connected
+  //         if (accounts.length > 0) {
+  //           router.push("/mint");
+  //         } else {
+  //           console.log("No accounts found.");
+  //         }
 
-        }catch(err){
-          if (err.code === 4001) {
-            // EIP-1193 userRejectedRequest error.
-              console.log("Please connect to MetaMask.");
-            } else {
-                  console.error(err);
-              }
-        }
-      }
-      else{
-      console.log("metamask not detected");
-      alert("Please install metamask and connect to a network");
-      }
+  //       }catch(err){
+  //         if (err.code === 4001) {
+  //           // EIP-1193 userRejectedRequest error.
+  //             console.log("Please connect to MetaMask.");
+  //           } else {
+  //                 console.error(err);
+  //             }
+  //       }
+  //     }
+  //     else{
+  //     console.log("metamask not detected");
+  //     alert("Please install metamask and connect to a network");
+  //     }
 
      
-    } catch (error) {
-      console.error("Error connecting DApp to your wallet");
-      console.error(error);
-    }
-  };
+  //   } catch (error) {
+  //     console.error("Error connecting DApp to your wallet");
+  //     console.error(error);
+  //   }
+  // };
 
   
   return (
     <div>
       <button
-          onClick={connectWallet}
+          // onClick={connectWallet}
           // disabled={wallet.address != ""}
           // className={`relative inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-custom hover:bg-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-custom ${
           //   wallet.address == "" ? "disabled:opacity-50" : ""
@@ -97,11 +97,11 @@ const ConnectWallet = () => {
               clipRule="evenodd"
             />
           </svg>
-          <span>
+          {/* <span>
             {wallet.address != ""
               ? `Connected ${wallet.acc_short}`
               : `Connect Wallet`}
-          </span>
+          </span> */}
         </button>
       {/* {!networkOk ? (
         <button

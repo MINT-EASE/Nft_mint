@@ -1,15 +1,15 @@
-// import Connect from '@/components/connect'
+import Connect from '@/components/connect'
 import React from 'react';
 import ConnectWallet from '@/components/connectWallet';
 
 const Page = () => {
   return (
     <div>
-      {/* <Connect/> */}
+      <Connect/>
 
-      <ConnectWallet/>
+      {/* <ConnectWallet/> */}
 
-      {/* <div 
+      <div 
         className='w-full h-screen flex justify-center items-center'
       >
         <div
@@ -38,7 +38,7 @@ const Page = () => {
             </button>
           </div>
         </div>
-      </div> */}
+      </div>
 
 
     </div>

@@ -5,6 +5,7 @@ import ABI from "@/scripts/abi.mjs";
 import BYTECODE from "@/scripts/bytecode.mjs";
 import Image from "next/image";
 import { ZKsyncPlugin, getPaymasterParams ,ContractFactory,} from "web3-plugin-zksync"
+import { MdOutlineFileUpload } from "react-icons/md";
 
 
 const MintNFT = () => {
@@ -186,19 +187,65 @@ const MintNFT = () => {
   };
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Mint Your NFT</h1>
+    <div className="w-5/12 flex flex-col justify-center">
+      <p
+            className='text-center text-3xl text-white font-bold mb-8'
+        >
+            Mint Your NFT
+      </p>
+
+      <p
+            className='text-center text-2xl text-white font-bold mb-4'
+        >
+            NFT Details
+      </p>
+
+      <p className='text-center mb-4'>
+            Upload Media
+      </p>
 
     
 
       {/* Upload Image */}
       {!tokenURI && (
-        <>
-          <input type="file" ref={inputFile} onChange={handleChange} />
+        <div className="flex justify-center">
+          {/* <input type="file" ref={inputFile} onChange={handleChange} />
           <button disabled={uploading} onClick={uploadFile}>
             {uploading ? "Uploading..." : "Upload"}
-          </button>
-        </>
+          </button> */}
+
+          <div
+            className='mb-8 p-8 w-[354px] h-[188px] border-dotted border-2 border-white flex flex-col justify-center items-center' 
+        >
+            <p
+                className='text-xs font-bold mb-4'
+            >
+              PNG, WEBP. Max 2mb 
+            </p>
+
+            <label
+                htmlFor='imageUpload'
+                className='cursor-pointer text-base font-bold bg-yellow1 rounded-3xl p-4 flex flex-row items-center'
+            >
+                <MdOutlineFileUpload className='mr-2' />
+
+                Browse Files
+            </label>
+
+            <input 
+                hidden={true}
+                id='imageUpload'
+                type="file" ref={inputFile} onChange={handleChange}
+                className="mb-8"
+            />
+
+            <button disabled={uploading} onClick={uploadFile}
+            className='mt-8 w-[100px] text-center cursor-pointer text-base font-bold bg-yellow1 rounded-3xl p-2 flex flex-row justify-center'
+            >
+            {uploading ? "Uploading..." : "Upload"}
+            </button>
+        </div>
+        </div>
       )}
 
       {image && !tokenURI && (
