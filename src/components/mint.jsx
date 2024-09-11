@@ -1,6 +1,150 @@
 "use client";
 
-import UsePaymaster from "../hooks/usePaymaster"; // Import the Paymaster hook
+import UsePaymaster from "../hooks/Paymaster"; // Import the Paymaster hook
+
+// import { useState, useEffect } from "react";
+// import { ethers } from "ethers";
+// // Import your NFT contract ABI
+// // import { useSigner, useProvider } from "wagmi";
+// import ABI from "@/scripts/abi.mjs";
+// import BYTECODE from "@/scripts/bytecode.mjs";
+// import Web3 from "web3";
+// import { ZKsyncPlugin, getPaymasterParams } from "web3-plugin-zksync";
+// import Image from "next/image";
+
+// export default function MintNFT() {
+//   const [url, setUrl] = useState("");
+//   const [mintStatus, setMintStatus] = useState("");
+//   const [cost, setCost] = useState("0.01"); // Default price for minting
+//   const [nftInstance, setNftInstance] = useState(null);
+//   const [loading, setLoading] = useState(false);
+//   const [hasNFT, setHasNFT] = useState(false);
+//   const [nfts, setNfts] = useState([]);
+//   const [account, setAccount] = useState(null);
+//   const inputFile = useRef(null);
+  
+
+
+//   // Update the NFT contract instance on mount
+//   useEffect(() => {
+  
+//       // const nftContractAddress = "0xD9a7B146ec05E2cd6680088DaBaD7121EBf57624"; // Replace with your contract address
+//       // const nftInstance = new ethers.Contract(nftContractAddress, ABI, signer);
+//       const web3 = new Web3(window.ethereum); // Use MetaMask provider
+//       const zksync = web3.ZKsync;
+//       const PRIVATE_KEY = "0x45a71309065d92d987010d97253ab26b0406f338b8de46a9c4f267d305c5d1fa";
+//       const wallet = new zksync.Wallet(PRIVATE_KEY);
+
+//           const contractAddress = "0xD9a7B146ec05E2cd6680088DaBaD7121EBf57624";
+//           const nftContract = new ethers.Contract(contractAddress, ABI, wallet);
+
+//       setNftInstance(nftContract);
+    
+//   }, []);
+
+//   const handleMint = async (e) => {
+//     e.preventDefault();
+//     setMintStatus("");
+//     setLoading(true);
+
+//     if (!url || !nftInstance) {
+//       setMintStatus("Please provide a valid URL and ensure the contract is connected.");
+//       setLoading(false);
+//       return;
+//     }
+
+//     try {
+//       // Use the Paymaster hook to estimate gas and get paymaster parameters
+//       const txParams = await UsePaymaster({ nftContract, url, price: cost });
+      
+//       // Call the mint function with Paymaster
+//       const tx = await nftContract.mint(url, txParams);
+      
+//       // Wait for the transaction to be mined
+//       await tx.wait();
+//       setMintStatus("Mint successful! Your NFT is on-chain.");
+      
+//       // After successful mint, you can fetch the user's NFTs and update the state
+//       const userNfts = await nftContract.tokensOfOwner(signer.getAddress());
+//       setNfts(userNfts);
+//       setHasNFT(true);
+//     } catch (error) {
+//       setMintStatus(`Mint failed: ${error.message}`);
+//       console.error("Minting error: ", error);
+//     }
+
+//     setLoading(false);
+//   };
+
+//   return (
+//     <div className="container mx-auto px-4 py-8">
+//       <h1 className="text-3xl font-bold text-center">Mint your NFT</h1>
+
+//       <div className="mt-8 max-w-md mx-auto">
+//         <form onSubmit={handleMint} className="space-y-4">
+//           <div>
+//             <label htmlFor="url" className="block text-sm font-medium text-gray-700">
+//               Image URL
+//             </label>
+//             <input
+//               type="text"
+//               id="url"
+//               value={url}
+//               onChange={(e) => setUrl(e.target.value)}
+//               className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+//               placeholder="Enter the URL of your image"
+//             />
+//           </div>
+
+//           <div>
+//             <label htmlFor="price" className="block text-sm font-medium text-gray-700">
+//               Minting Cost (ETH)
+//             </label>
+//             <input
+//               type="text"
+//               id="cost"
+//               value={cost}
+//               onChange={(e) => setCost(e.target.value)}
+//               className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+//               placeholder="Enter the minting cost"
+//             />
+//           </div>
+
+//           <button
+//             type="submit"
+//             disabled={loading}
+//             className={`w-full px-4 py-2 text-white font-medium rounded-md ${
+//               loading ? "bg-gray-400" : "bg-indigo-600 hover:bg-indigo-700"
+//             }`}
+//           >
+//             {loading ? "Minting..." : "Mint NFT"}
+//           </button>
+//         </form>
+
+//         {mintStatus && (
+//           <p className="mt-4 text-center text-sm font-semibold text-red-600">
+//             {mintStatus}
+//           </p>
+//         )}
+
+//         {hasNFT && nfts.length > 0 && (
+//           <div className="mt-8">
+//             <h2 className="text-xl font-bold">Your NFTs:</h2>
+//             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+//               {nfts.map((nft, index) => (
+//                 <div key={index} className="border p-4 rounded-lg shadow-sm">
+//                   <Image src={nft.image} alt={`NFT ${index}`} className="h-40 w-full object-cover rounded-md" height={100} width={100} />
+//                   <p className="mt-2 text-sm text-center">{nft.name}</p>
+//                 </div>
+//               ))}
+//             </div>
+//           </div>
+//         )}
+//       </div>
+//     </div>
+//   );
+// }
+
 import ABI from "@/scripts/abi.mjs";
 import BYTECODE from "@/scripts/bytecode.mjs";
 import Web3 from "web3";
