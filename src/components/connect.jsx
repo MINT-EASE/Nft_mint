@@ -48,11 +48,16 @@ const Connect = () => {
      <div
         className='flex flex-row justify-between items-center p-8 border-b border-slate-500'
     >
-            <Image src='/assets/logo.png' width="24" height="24" alt=''
+
+      <Image 
+         src={"/assets/logo.png"}
+         width={140}
+         height={30}
       />
+      
 
-
-        <button onClick={requestAccount}
+        <button 
+        onClick={requestAccount}
            className='flex flex-row justify-between items-center h-[52px] bg-yellow1 py-2 px-4 rounded-2xl text-white font-medium text-lg'
         >
            <Image 

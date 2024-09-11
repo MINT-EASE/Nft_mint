@@ -1,10 +1,13 @@
 import Connect from '@/components/connect'
-import React from 'react'
+import React from 'react';
+import ConnectWallet from '@/components/connectWallet';
 
 const Page = () => {
   return (
     <div>
       <Connect/>
+
+      {/* <ConnectWallet/> */}
 
       <div 
         className='w-full h-screen flex justify-center items-center'
@@ -22,7 +25,7 @@ const Page = () => {
           <p
             className='text-white font-normal text-xl text-center mb-4'
           >
-            "With MintEase, mint your NFTs effortlessly and gas-free. Just upload, set, and mint — we’ll handle the fees!
+            With MintEase, mint your NFTs effortlessly and gas-free. Just upload, set, and mint — we will handle the fees!
           </p>
 
           <div

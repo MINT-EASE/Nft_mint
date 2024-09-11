@@ -1,104 +1,27 @@
 "use client";
 
-<<<<<<< HEAD
-import { useState } from 'react';
-// import { ethers } from 'ethers';
-// import { Web3ZKsyncL2, ZKsyncPlugin, getPaymasterParams } from 'zksync-web3-plugin';
-// import { Web3 } from "web3";
-
-const Mint = () => {
-  // const [tokenURI, setTokenURI] = useState<string>('');
-  // const [message, setMessage] = useState<string>('');
-  // const [minting, setMinting] = useState<boolean>(false);
-
-  // Handles the minting process
-  // const mintNFT = async () => {
-  //   setMinting(true);
-  //   setMessage('');
-
-  //   try {
-  //    const web3 = new Web3("https://zksync-sepolia.g.alchemy.com/v2/qEmpdbwR0-Q8zlYviUFkX1d_B8b3RJq0");
-  //    web3.registerPlugin(new ZKsyncPlugin("https://sepolia.era.zksync.dev"));
-
-  //     // Connect wallet
-
-  //     const privateKey = "45a71309065d92d987010d97253ab26b0406f338b8de46a9c4f267d305c5d1fa";
-  //     const wallet = new web3.ZKsync.Wallet(privateKey); 
-
-  //     // const [account] = await web3.eth.requestAccounts();
-  //     const provider = new wallet.providers.web3(window.ethereum);
-  //     const signer = provider.getSigner();
-
-      
-
-  //     // Initialize contract and wallet
-  //     const nftContract = new web3.Contract(
-  //       "0xabC65b88f568D3A5C1d7bACB78AF6277E15aA094", //contract address
-  //       ["function mint(address to, string memory tokenURI) public"],
-  //       signer
-  //     );
-
-
-  //     const paymasterParams = getPaymasterParams("0x13D0D8550769f59aa241a41897D4859c87f7Dd46", { //paymaster
-  //       type: "ApprovalBased",
-  //       token: "0x927488F48ffbc32112F1fF721759649A89721F8F", //approve token
-  //       minimalAllowance: 1,
-  //       innerInput: new Uint8Array(),
-  //     });
-
-  //     // Mint the NFT
-  //     const tx = await nftContract.mint(account, tokenURI, { paymasterParams });
-  //     await tx.wait();
-
-  //     setMessage('Mint successful!');
-  //   } catch (error) {
-  //     setMessage(`Error: ${error.message}`);
-  //   } finally {
-  //     setMinting(false);
-  //   }
-  // };
-
-  return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
-      <div className="bg-white p-8 rounded-lg shadow-md max-w-md w-full">
-        <h1 className="text-2xl font-bold mb-4 text-center">Gasless NFT Minting</h1>
-        <p className="text-gray-600 mb-4">Mint your NFT without paying gas fees!</p>
-        <input
-          className="border border-gray-300 rounded-md p-2 w-full mb-4"
-          type="text"
-          placeholder="Enter Token URI"
-          value={tokenURI}
-          // onChange={(e) => setTokenURI(e.target.value)}
-        />
-        <button
-          // onClick={mintNFT}
-          disabled={!tokenURI || minting}
-          // className={`w-full p-3 text-white rounded-md ${minting ? 'bg-gray-400' : 'bg-blue-500 hover:bg-blue-600'} transition duration-200`}
-        >
-          {minting ? 'Minting...' : 'Mint NFT'}
-        </button>
-        {/* {message && <p className="mt-4 text-center text-green-500">{message}</p>} */}
-      </div>
-=======
-import React, { useState, useRef } from "react";
-import Web3 from "web3";
-import { pinata } from "@/utils/config"; // Assuming Pinata setup is in config
+import UsePaymaster from "../hooks/Paymaster"; // Import the Paymaster hook
 import ABI from "@/scripts/abi.mjs";
+import BYTECODE from "@/scripts/bytecode.mjs";
+import Web3 from "web3";
+// import { ZKsyncPlugin, getPaymasterParams } from "web3-plugin-zksync";
+import {ethers} from "ethers"
+import React, { useState, useRef, useEffect } from "react";
 import Image from "next/image";
-import { ZKsyncPlugin, getPaymasterParams } from "web3-plugin-zksync"
+import { ZKsyncPlugin, getPaymasterParams ,ContractFactory,} from "web3-plugin-zksync"
+import { MdOutlineFileUpload } from "react-icons/md";
+
 
 const MintNFT = () => {
   const [account, setAccount] = useState(null);
   const [file, setFile] = useState(null);
-  const [image, setImage] = useState(null);
   const [url, setUrl] = useState("");
   const [minting, setMinting] = useState(false);
-  const [message, setMessage] = useState("");
+  const [mintMessage, setMintMessage] = useState("");
   const [tokenURI, setTokenURI] = useState("");
   const [address, setAddress] = useState("");
   const [uploading, setUploading] = useState(false);
-  const [mintMessage, setMintMessage] = useState('');
-
+  const [gasParams, setGasParams] = useState(null); // Add a state for gasParams
   const inputFile = useRef(null);
 
   // Connect to MetaMask
@@ -117,22 +40,22 @@ const MintNFT = () => {
     }
   };
 
-  // Upload file to Pinata
-   const uploadFile = async () => {
+  // Upload file to Pinata or IPFS
+  const uploadFile = async () => {
     try {
       setUploading(true);
       const data = new FormData();
       data.set("file", file);
+
       const uploadRequest = await fetch("/api/files", {
         method: "POST",
         body: data,
       });
       const signedUrl = await uploadRequest.json();
-      console.log( "signed url",signedUrl);
       setUrl(signedUrl);
       setUploading(false);
     } catch (e) {
-      console.log(e);
+      console.error(e);
       setUploading(false);
       alert("Trouble uploading file");
     }
@@ -142,74 +65,123 @@ const MintNFT = () => {
     setFile(e.target.files[0]);
   };
 
+  // Move the usePaymaster hook call here and get the gasParams
+  useEffect(() => {
+    const getGasParams = async () => {
+      if (url) {
+        try {
+          const web3 = new Web3(window.ethereum); // Use MetaMask provider
+          const zksync = web3.ZKsync;
+          const PRIVATE_KEY = "0x45a71309065d92d987010d97253ab26b0406f338b8de46a9c4f267d305c5d1fa";
+          const wallet = new zksync.Wallet(PRIVATE_KEY);
 
-  // Mint the NFT using MetaMask
+          const contractAddress = "0xD9a7B146ec05E2cd6680088DaBaD7121EBf57624";
+          const nftContract = new ethers.Contract(contractAddress, ABI, wallet);
+
+          const gasData = await UsePaymaster({
+            nftInstance: nftContract,
+            url: `ipfs://${url}`,
+            price: "0.01",
+          });
+
+          setGasParams(gasData); // Store the gas params in state
+        } catch (error) {
+          console.error("Error fetching gas params:", error);
+        }
+      }
+    };
+
+    getGasParams();
+  }, [url]); // Only run when URL is available
+
+  // Mint the NFT using Paymaster for gas fees
   const handleMint = async () => {
-
     try {
+      setMinting(true);
+
       const web3 = new Web3(window.ethereum); // Use MetaMask provider
       web3.registerPlugin(new ZKsyncPlugin("https://sepolia.era.zksync.dev"));
-      const contractAddress = "0x31d829BE8be3EfAfC7F7C1aDB482278f4B9Fa582"; // Your deployed MyNFT contract address
-      const nftContract = new web3.eth.Contract(ABI, contractAddress);
 
-      const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-      const account = accounts[0];
-    
+      const zksync = web3.ZKsync;
+      const PRIVATE_KEY = "0x45a71309065d92d987010d97253ab26b0406f338b8de46a9c4f267d305c5d1fa"; // Replace with your private key
+      const wallet = new zksync.Wallet(PRIVATE_KEY);
 
-      console.log("nft contract",nftContract);
-        console.log("Recipient address (account):", account);
+      const contractAddress = "0xD9a7B146ec05E2cd6680088DaBaD7121EBf57624"; // Your deployed NFT contract address
+      const nftContract = new ethers.Contract(contractAddress, ABI, wallet);
 
-      // Make sure the URL is available
-      if (!url) {
-        alert('Please provide the URL for the NFT');
+      const fileUrl = `ipfs://${url}`; // Assuming the file is uploaded to Pinata/IPFS
+
+      // Ensure gasParams are available before proceeding
+      if (!gasParams) {
+        console.error("No gas params available");
         return;
       }
 
-        // Paymaster settings
-      const paymasterParams = getPaymasterParams("0x13D0D8550769f59aa241a41897D4859c87f7Dd46", {
-        type: "ApprovalBased",
-        token: "0x927488F48ffbc32112F1fF721759649A89721F8F", // The token the Paymaster is allowed to use for gas fees
-        minimalAllowance: 1,
-        innerInput: new Uint8Array(),
-      });
-       console.log()
-
-      // Mint the NFT
-      const mintTx = await nftContract.methods.mint(account, url).send({
-        from: account,
-        gas: 0, // User is not paying gas
-       paymasterParams, // Paymaster covers the gas fee
+      // Mint the NFT, using Paymaster to cover gas fees
+      const mintTx = await nftContract.mint(account, fileUrl, {
+        ...gasParams, // Pass gas estimates and Paymaster custom data
+        from: account, // User's MetaMask account
       });
 
-      setMessage("Mint successful!");
-      console.log("Transaction hash:", mintTx.transactionHash); // You can check this on the blockchain explorer
+      setMintMessage("Mint successful!");
+      console.log("Transaction hash:", mintTx.hash);
     } catch (error) {
       console.error("Error minting NFT:", error);
-      setMessage(`Error: ${error.message}`);
+      setMintMessage(`Error: ${error.message}`);
     } finally {
       setMinting(false);
     }
   };
 
   return (
-    <div  className='flex flex-row justify-between items-center p-8 border-b border-slate-500'>
+    <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">Mint Your NFT</h1>
 
-      {/* Upload Image */}
       {!tokenURI && (
-        <>
-          <input type="file" ref={inputFile} onChange={handleChange} />
+        <div className="flex justify-center">
+          {/* <input type="file" ref={inputFile} onChange={handleChange} />
           <button disabled={uploading} onClick={uploadFile}>
             {uploading ? "Uploading..." : "Upload"}
-          </button>
-        </>
+          </button> */}
+
+          <div
+            className='mb-8 p-8 w-[354px] h-[188px] border-dotted border-2 border-white flex flex-col justify-center items-center' 
+        >
+            <p
+                className='text-xs font-bold mb-4'
+            >
+              PNG, WEBP. Max 2mb 
+            </p>
+
+            <label
+                htmlFor='imageUpload'
+                className='cursor-pointer text-base font-bold bg-yellow1 rounded-3xl p-4 flex flex-row items-center'
+            >
+                <MdOutlineFileUpload className='mr-2' />
+
+                Browse Files
+            </label>
+
+            <input 
+                hidden={true}
+                id='imageUpload'
+                type="file" ref={inputFile} onChange={handleChange}
+                className="mb-8"
+            />
+
+            <button disabled={uploading} onClick={uploadFile}
+            className='mt-8 w-[100px] text-center cursor-pointer text-base font-bold bg-yellow1 rounded-3xl p-2 flex flex-row justify-center'
+            >
+            {uploading ? "Uploading..." : "Upload"}
+            </button>
+        </div>
+        </div>
       )}
 
-      {image && !tokenURI && (
-        <Image src={image} alt="NFT Preview" className="mt-4" width={200} height={200} />
+      {file && !tokenURI && (
+        <Image src={URL.createObjectURL(file)} alt="NFT Preview" className="mt-4" width={200} height={200} />
       )}
 
-      {/* Mint Form */}
       {url && (
         <div>
           <h2 className="text-xl font-semibold mt-4">Mint Form</h2>
@@ -225,19 +197,270 @@ const MintNFT = () => {
             disabled={minting}
             className="mt-4 p-2 bg-green-500 text-white"
           >
-            {minting ? 'Minting...' : 'Mint NFT'}
+            {minting ? "Minting..." : "Mint NFT"}
           </button>
           {mintMessage && <p className="mt-4 text-red-500">{mintMessage}</p>}
         </div>
       )}
-
-      {message && <p className="mt-4 text-red-500">{message}</p>}
->>>>>>> 534fa3651f16eea709cc519594f4ea59d19c7d80
     </div>
   );
 };
 
 export default MintNFT;
+
+// import React, { useState, useRef } from "react";
+// import Web3 from "web3";
+// import ABI from "@/scripts/abi.mjs";
+// import BYTECODE from "@/scripts/bytecode.mjs";
+// import Image from "next/image";
+// import { ZKsyncPlugin, getPaymasterParams ,ContractFactory,} from "web3-plugin-zksync"
+
+
+// const MintNFT = () => {
+//   const [account, setAccount] = useState(null);
+//   const [file, setFile] = useState(null);
+//   const [image, setImage] = useState(null);
+//   const [url, setUrl] = useState("");
+//   const [minting, setMinting] = useState(false);
+//   const [message, setMessage] = useState("");
+//   const [tokenURI, setTokenURI] = useState("");
+//   const [address, setAddress] = useState("");
+//   const [uploading, setUploading] = useState(false);
+//   const [mintMessage, setMintMessage] = useState('');
+
+//   const inputFile = useRef(null);
+
+//   // Connect to MetaMask
+//   const connectWallet = async () => {
+//     if (window.ethereum) {
+//       try {
+//         const accounts = await window.ethereum.request({
+//           method: "eth_requestAccounts",
+//         });
+//         setAccount(account[0]);
+//       } catch (error) {
+//         console.error("Failed to connect wallet:", error);
+//       }
+//     } else {
+//       console.log("MetaMask not found");
+//     }
+//   };
+
+//   async function getEstimate() {
+//     // Get gas price
+//     if (!provider) return;
+//     let gasPrice = await provider.getGasPrice();
+//     let price = ethers.utils.formatEther(gasPrice.toString());
+//     setPrice(price);
+//     // Estimate gas required for transaction
+//     if (!greeterInstance) return;
+//     let gasEstimate = await greeterInstance.estimateGas["setGreeting"](message);
+//     let gas = ethers.utils.formatEther(gasEstimate.toString());
+//     setGas(gas);
+//     // Calculate the cost: gasPrice * gasEstimate
+//     let transactionCost = gasPrice.mul(gasEstimate);
+//     let cost = ethers.utils.formatEther(transactionCost.toString());
+//     // Set the cost state
+//     setCost(cost);
+//   }
+
+//   // Upload file to Pinata
+//    const uploadFile = async () => {
+//     try {
+//       setUploading(true);
+//       const data = new FormData();
+//       data.set("file", file);
+//       const uploadRequest = await fetch("/api/files", {
+//         method: "POST",
+//         body: data,
+//       });
+//       const signedUrl = await uploadRequest.json();
+//       console.log( "signed url",signedUrl);
+
+//       setUrl(signedUrl);
+//       setUploading(false);
+//     } catch (e) {
+//       console.log(e);
+//       setUploading(false);
+//       alert("Trouble uploading file");
+//     }
+//   };
+
+//   const handleChange = (e) => {
+//     setFile(e.target.files[0]);
+//   };
+
+
+//   // Mint the NFT using MetaMask
+//   const handleMint = async () => {
+    
+
+//     try {
+//       const web3 = new Web3(window.ethereum); // Use MetaMask provider
+//       web3.registerPlugin(new ZKsyncPlugin("https://sepolia.era.zksync.dev"));
+
+//       const contractAddress = "0xD9a7B146ec05E2cd6680088DaBaD7121EBf57624"; // Your deployed MyNFT contract address
+     
+
+//       const zksync = web3.ZKsync;
+
+//       const PRIVATE_KEY = "0x45a71309065d92d987010d97253ab26b0406f338b8de46a9c4f267d305c5d1fa";
+//       const wallet = new zksync.Wallet(PRIVATE_KEY);
+//       //  const nftContract = new web3.eth.Contract(ABI, contractAddress, wallet);
+
+//       // const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+//       // const account = accounts[0];
+
+//       console.log("Wallet address:", await wallet.getAddress());
+//       console.log("nft contract",nftContract);
+//       console.log("Recipient address (account):", account);
+
+//       const initContracts = async (provider, wallet) => {
+//         if (provider && wallet) {
+//             try {
+              
+//               const nftContract = new ethers.Contract("0xD9a7B146ec05E2cd6680088DaBaD7121EBf57624", ABI, wallet);
+//               setNftContractInstance(nftContract);
+
+//               const address = await wallet.getAddress();
+//               console.log("address", address);
+
+//               const balance = await nftContract.tokensOfOwner(address);
+//               console.log("balance", balance);
+
+//               if (balance.length > 0) {
+//                 let ownedNfts = [];
+//                 for (let i = 0; i < balance.length; i++) {
+//                   const tokenId = balance[i];
+                  
+//                   const tokenURI = await nftContract.tokenURI(tokenId);
+//                   if (!tokenURI) continue;
+
+//                   const response = await fetch(tokenURI);
+//                   if (!response.ok) continue;
+
+//                   const metadata = await response.json();
+//                   ownedNfts.push(metadata);
+//                 }
+
+//                 setNfts(ownedNfts);
+//               } else {
+//                 setNfts([]);
+//               }
+//             } catch (error) {
+//               console.error('Error initializing contracts:', error);
+//             } finally {
+//               setLoading(false);
+//             }
+//         };
+//         }
+
+
+//         const address = await wallet.getAddress();
+//         const balance = await nftContract.balanceOf(address);
+        
+//         console.log("Wallet Balance:", balance);
+
+//         if (balance > 0) {
+//           let ownedNfts  = [];
+//           const ownedTokensResponse = await nftContract.tokensOfOwner(address);
+//           console.log("Owned tokens:", ownedTokensResponse);
+
+//         for (let i = 0; i < ownedTokensResponse.length; i++) {
+//           const tokenId = ownedTokensResponse[i];
+
+//          const tokenURI = await nftContract.tokenURI(tokenId);
+//          console.log("token uri", tokenURI);
+//          if (tokenURI == undefined || tokenURI == "") {
+//           continue;
+//           }
+
+//          const response = await fetch(tokenURI);
+//           if (!response.ok) {
+//             continue;
+//           }
+
+//          ownedNfts.push((await response.json()) );
+//        }
+//       }
+
+//         const contract = await nftContract.deploy();
+//         console.log("Contract methods:", contract.methods);
+
+//         // Paymaster settings
+//        const paymasterParams = getPaymasterParams("0x13D0D8550769f59aa241a41897D4859c87f7Dd46", {
+//         type: "ApprovalBased",
+//         token: "0x927488F48ffbc32112F1fF721759649A89721F8F", // The token the Paymaster is allowed to use for gas fees
+//         minimalAllowance: 1000000000000000000,
+//         innerInput: new Uint8Array(),
+//       });
+
+//       // Mint the NFT
+//       const mintTx = await contract.methods.mint(account, url).send({
+//         from: account,
+//         gas: 0, // User is not paying gas
+//        paymasterParams, // Paymaster covers the gas fee
+//       });
+
+//       setMessage("Mint successful!");
+//       console.log("Transaction hash:", mintTx.transactionHash); // You can check this on the blockchain explorer
+//     } catch (error) {
+//       console.error("Error minting NFT:", error);
+//       setMessage(`Error: ${error.message}`);
+//     } finally {
+//       setMinting(false);
+//     }
+//   };
+
+//   return (
+//     <div className="container mx-auto p-4">
+//       <h1 className="text-2xl font-bold mb-4">Mint Your NFT</h1>
+
+    
+
+//       {/* Upload Image */}
+//       {!tokenURI && (
+//         <>
+//           <input type="file" ref={inputFile} onChange={handleChange} />
+//           <button disabled={uploading} onClick={uploadFile}>
+//             {uploading ? "Uploading..." : "Upload"}
+//           </button>
+//         </>
+//       )}
+
+//       {image && !tokenURI && (
+//         <Image src={image} alt="NFT Preview" className="mt-4" width={200} height={200} />
+//       )}
+
+//       {/* Mint Form */}
+//       {url && (
+//         <div>
+//           <h2 className="text-xl font-semibold mt-4">Mint Form</h2>
+//           <input
+//             type="text"
+//             placeholder="Recipient Address"
+//             value={address}
+//             onChange={(e) => setAddress(e.target.value)}
+//             className="mt-2 p-2 border border-gray-300"
+//           />
+//           <button
+//             onClick={handleMint}
+//             disabled={minting}
+//             className="mt-4 p-2 bg-green-500 text-white"
+//           >
+//             {minting ? 'Minting...' : 'Mint NFT'}
+//           </button>
+//           {mintMessage && <p className="mt-4 text-red-500">{mintMessage}</p>}
+//         </div>
+//       )}
+
+//       {message && <p className="mt-4 text-red-500">{message}</p>}
+//     </div>
+    
+//   );
+// };
+
+// export default MintNFT;
 
 
 
