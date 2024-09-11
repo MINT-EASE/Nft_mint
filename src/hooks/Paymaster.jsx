@@ -17,7 +17,7 @@ import * as ethers from "ethers";
  * @param {PaymasterProps} params - The parameters for the function.
  * @returns {Promise<Object>} - An object containing gas estimates and custom data.
  */
-const usePaymaster = async ({ nftInstance, url, price }) => {
+const UsePaymaster = async ({ nftInstance, url, price }) => {
   let gasPrice = ethers.utils.parseEther(price);
   const paymasterParams = utils.getPaymasterParams("0xC6F122635dace9eBDf8707b49414B10973488f6F", {
     type: "General",
@@ -27,7 +27,7 @@ const usePaymaster = async ({ nftInstance, url, price }) => {
   // Estimate gas limit via paymaster
   const gasLimit = await nftInstance.estimateGas.mint(url, {
     customData: {
-      gasPerPubdata: utils.DEFAULT_GAS_PER_PUBDATA_LIMIT,
+      gasPerPubdata: 5000,
       paymasterParams: paymasterParams,
     },
   });
@@ -37,10 +37,10 @@ const usePaymaster = async ({ nftInstance, url, price }) => {
     maxPriorityFeePerGas: ethers.BigNumber.from(0),
     gasLimit: gasLimit,
     customData: {
-      gasPerPubdata: utils.DEFAULT_GAS_PER_PUBDATA_LIMIT,
+      gasPerPubdata: 5000,
       paymasterParams: paymasterParams,
     },
   };
 };
 
-export default usePaymaster;
+export default UsePaymaster;
