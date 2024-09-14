@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 const { v4: uuidv4 } = require("uuid");
 import { pinata } from "@/utils/config";
 
-export const dynamic = "force-dynamic";
+// export const dynamic = "force-dynamic";
 
 export async function GET(req, res) {
   try {
