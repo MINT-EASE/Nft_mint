@@ -53,6 +53,7 @@ const Connect = () => {
          src={"/assets/logo.png"}
          width={140}
          height={30}
+         alt=''
       />
       
 

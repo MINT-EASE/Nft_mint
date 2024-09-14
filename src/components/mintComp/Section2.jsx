@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import React, { useState } from 'react'
 
 const Section2 = () => {
@@ -37,8 +38,11 @@ const Section2 = () => {
                 <div
                     className='p-4 rounded-xl border-2 border-slate-500'
                 >
-                    <img 
+                    <Image 
                         src='/assets/image.png'
+                        width={50}
+                        height={50}
+                        alt=''
                     />
 
                     <p

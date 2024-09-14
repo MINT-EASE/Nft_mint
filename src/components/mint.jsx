@@ -25,20 +25,20 @@ const MintNFT = () => {
   const inputFile = useRef(null);
 
   // Connect to MetaMask
-  const connectWallet = async () => {
-    if (window.ethereum) {
-      try {
-        const accounts = await window.ethereum.request({
-          method: "eth_requestAccounts",
-        });
-        setAccount(accounts[0]);
-      } catch (error) {
-        console.error("Failed to connect wallet:", error);
-      }
-    } else {
-      console.log("MetaMask not found");
-    }
-  };
+  // const connectWallet = async () => {
+  //   if (window.ethereum) {
+  //     try {
+  //       const accounts = await window.ethereum.request({
+  //         method: "eth_requestAccounts",
+  //       });
+  //       setAccount(accounts[0]);
+  //     } catch (error) {
+  //       console.error("Failed to connect wallet:", error);
+  //     }
+  //   } else {
+  //     console.log("MetaMask not found");
+  //   }
+  // };
 
   // Upload file to Pinata or IPFS
   const uploadFile = async () => {
