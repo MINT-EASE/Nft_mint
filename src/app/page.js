@@ -1,10 +1,17 @@
-import Connect from '@/components/connect'
+
 import React from 'react';
 import ConnectWallet from '@/components/connectWallet';
 
+import dynamic from "next/dynamic";
+
+ const Connect = dynamic(() => import ("../components/connect"), {
+  ssr: false,
+})
+
 const Page = () => {
   return (
-    <div>
+  <div className='bg-black'>
+      
       <Connect/>
 
       {/* <ConnectWallet/> */}

@@ -1,4 +1,4 @@
-import { Contract, utils } from "zksync-ethers";
+import { Contract } from "web3-plugin-zksync";
 // import { PAYMASTER_CONTRACT_ADDRESS } from "../constants/consts";
 import * as ethers from "ethers";
 
