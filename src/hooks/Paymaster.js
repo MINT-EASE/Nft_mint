@@ -1,6 +1,6 @@
 import { Contract } from "web3-plugin-zksync";
 // import { PAYMASTER_CONTRACT_ADDRESS } from "../constants/consts";
-import * as ethers from "ethers";
+// import * as ethers from "ethers";
 
 /**
  * @typedef {Object} PaymasterProps
@@ -18,8 +18,8 @@ import * as ethers from "ethers";
  * @returns {Promise<Object>} - An object containing gas estimates and custom data.
  */
 const UsePaymaster = async ({ nftInstance, url, price }) => {
-  let gasPrice = ethers.utils.parseEther(price);
-  const paymasterParams = utils.getPaymasterParams("0xC6F122635dace9eBDf8707b49414B10973488f6F", {
+  let gasPrice = ethers.parseEther(price);
+  const paymasterParams = await getPaymasterParams("0xC6F122635dace9eBDf8707b49414B10973488f6F", {
     type: "General",
     innerInput: new Uint8Array(),
   });

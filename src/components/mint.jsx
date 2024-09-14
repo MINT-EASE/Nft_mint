@@ -5,7 +5,7 @@ import ABI from "@/scripts/abi.mjs";
 import BYTECODE from "@/scripts/bytecode.mjs";
 import Web3 from "web3";
 // import { ZKsyncPlugin, getPaymasterParams } from "web3-plugin-zksync";
-import {ethers} from "ethers"
+
 import React, { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import { ZKsyncPlugin, getPaymasterParams ,ContractFactory,} from "web3-plugin-zksync"
