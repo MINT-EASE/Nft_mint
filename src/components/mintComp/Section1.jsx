@@ -144,7 +144,7 @@ const Section1 = () => {
             </div>
 
             <button
-              className='mt-8 w-[320px] rounded-3xl bg-yellow1 text-black font-bold p-4 text-base w-[120px]'
+              className='mt-8 w-[120px] rounded-3xl bg-yellow1 text-black font-bold p-4 text-base w-[120px]'
             >
               Mint
             </button>
