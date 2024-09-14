@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { pinata } from "@/utils/config";
 
-export const dynamic = "force-dynamic";
+// export const dynamic = "force-dynamic";
 
 export async function GET(req) {
   try {
