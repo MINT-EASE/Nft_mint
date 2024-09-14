@@ -15,7 +15,7 @@ const Mint = dynamic(() => import ("../../components/mint"), {
 
 const Page = () => {
   return (
-    <div>
+    <div className='bg-black'>
        {/* <Mint/> */}
 
       <Head />
